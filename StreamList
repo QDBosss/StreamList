@@ -1,0 +1,144 @@
+npx create-react-app streamlist
+cd streamlist
+npm install react-router-dom
+/streamlist
+  /public
+  /src
+    /components
+      StreamList.js
+      Movies.js
+      Cart.js
+      About.js
+    /styles
+      App.css
+    App.js
+    index.js
+// src/components/StreamList.js
+import React, { useState } from 'react';
+
+const StreamList = () => {
+  const [input, setInput] = useState('');
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+    console.log(e.target.value);
+  };
+
+  return (
+    <div className="streamlist">
+      <h1>StreamList</h1>
+      <input
+        type="text"
+        value={input}
+        onChange={handleChange}
+        placeholder="Add to your streamlist..."
+      />
+    </div>
+  );
+};
+
+export default StreamList;
+// src/components/Movies.js
+import React from 'react';
+
+const Movies = () => {
+  return <div className="movies"><h1>Movies Page</h1></div>;
+};
+
+export default Movies;
+// src/components/Cart.js
+import React from 'react';
+
+const Cart = () => {
+  return <div className="cart"><h1>Cart Page</h1></div>;
+};
+
+export default Cart;
+// src/components/About.js
+import React from 'react';
+
+const About = () => {
+  return <div className="about"><h1>About Page</h1></div>;
+};
+
+export default About;
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import StreamList from './components/StreamList';
+import Movies from './components/Movies';
+import Cart from './components/Cart';
+import About from './components/About';
+import './styles/App.css';
+
+function App() {
+  return (
+    <Router>
+      <div className="app">
+        <nav>
+          <ul>
+            <li><Link to="/">StreamList</Link></li>
+            <li><Link to="/movies">Movies</Link></li>
+            <li><Link to="/cart">Cart</Link></li>
+            <li><Link to="/about">About</Link></li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route exact path="/" component={StreamList} />
+          <Route path="/movies" component={Movies} />
+          <Route path="/cart" component={Cart} />
+          <Route path="/about" component={About} />
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+/* src/styles/App.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.app {
+  text-align: center;
+}
+
+nav {
+  background-color: #333;
+  padding: 1rem;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav ul li {
+  margin: 0 1rem;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+.streamlist,
+.movies,
+.cart,
+.about {
+  padding: 2rem;
+}
+npm start
+
