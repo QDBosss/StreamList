@@ -1,0 +1,129 @@
+npm install react-oauth/google
+npm install react-router-dom
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import Home from './components/Home';
+import Login from './components/Login';
+import CreditCard from './components/CreditCard';
+import Cart from './components/Cart';
+import PrivateRoute from './components/PrivateRoute';
+import './styles/App.css';
+
+const CLIENT_ID = 'YOUR_GOOGLE_OAUTH_CLIENT_ID';
+
+const App = () => {
+  return (
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
+      <Router>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <PrivateRoute path="/credit-card" component={CreditCard} />
+          <PrivateRoute path="/cart" component={Cart} />
+          <PrivateRoute path="/" component={Home} />
+        </Switch>
+      </Router>
+    </GoogleOAuthProvider>
+  );
+};
+
+export default App;
+import React from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useHistory } from 'react-router-dom';
+
+const Login = () => {
+  const history = useHistory();
+
+  const login = useGoogleLogin({
+    onSuccess: tokenResponse => {
+      localStorage.setItem('token', tokenResponse.access_token);
+      history.push('/');
+    },
+    onFailure: error => {
+      console.error('Login failed:', error);
+    },
+  });
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <button onClick={login}>Login with Google</button>
+    </div>
+  );
+};
+
+export default Login;
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      localStorage.getItem('token') ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/login" />
+      )
+    }
+  />
+);
+
+export default PrivateRoute;
+import React, { useState } from 'react';
+
+const CreditCard = () => {
+  const [cardNumber, setCardNumber] = useState('');
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    const formattedValue = value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+    setCardNumber(formattedValue);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    localStorage.setItem('creditCard', cardNumber);
+    alert('Credit card information saved!');
+  };
+
+  return (
+    <div>
+      <h2>Credit Card Information</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={cardNumber}
+          onChange={handleChange}
+          placeholder="1234 5678 9012 3456"
+          pattern="\d{4} \d{4} \d{4} \d{4}"
+          required
+        />
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  );
+};
+
+export default CreditCard;
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+
+const Cart = () => {
+  const history = useHistory();
+
+  const handleCheckout = () => {
+    history.push('/credit-card');
+  };
+
+  return (
+    <div>
+      <h2>Your Cart</h2>
+      {/* Add your cart items here */}
+      <button onClick={handleCheckout}>Checkout</button>
+    </div>
+  );
+};
+
+export default Cart;
